@@ -1,0 +1,69 @@
+{% extends "home_page.html" %}
+{% block title %}Competitions{% endblock %}
+{% block content %}
+<style>
+    /* Apply gradient background to body */
+    body {
+        background: linear-gradient(to bottom right, #b76aff, #66b3ff); /* Gradient from purple to blue */
+        margin: 0; /* Remove default margin */
+        padding: 0; /* Remove default padding */
+        min-height: 100vh;
+        font-family: Arial, sans-serif; /* Set default font family */
+    }
+
+    h5 {
+        color: #000; /* Set text color to black */
+        font-size: 36px;
+        padding: 25px; /* Remove padding */
+        margin: 0; /* Remove margin */
+    }
+
+    /* Style for the competition list */
+    .competition-list {
+        list-style-type: none; /* Remove bullet points */
+        padding: 0; /* Remove default padding */
+        text-align: center; /* Center align text */
+        overflow-y: auto; /* Enable vertical scrolling */
+        max-height: 90vh; /* Set maximum height to 90% of viewport height */
+        margin: 0 auto; /* Center the list horizontally */
+    }
+
+    /* Style for each competition item */
+    .competition-item {
+        margin: 20px auto; /* Add space around competition items */
+        border: 2px solid #3d3c3c; /* Add border around competition item */
+        border-radius: 8px; /* Add border radius for rounded corners */
+        padding: 15px; /* Add padding inside the box */
+        width: 200px; /* Set fixed width for competition item */
+        text-align: center; /* Center align text */
+        background-color: #f7f8f8; /* Apply soft mint green background color */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle box shadow */
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Add transition effects */
+    }
+
+    /* Style for competition links */
+    .competition-link {
+        display: block; /* Make the link fill the entire box */
+        text-decoration: none; /* Remove default underline */
+        color: #050505; /* Set text color */
+        font-size: 23px; /* Set font size */
+    }
+
+    /* Hover effect for competition items */
+    .competition-item:hover {
+        transform: translateY(-5px); /* Move the item slightly upwards on hover */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add shadow effect on hover */
+    }
+</style>
+
+<h5 style="text-align: center;">Competitions</h5>
+<ul class="competition-list">
+    {% for comp in comps %}
+        <li class="competition-item">
+            <a class="competition-link" href="{% url 'competing_teams' comp_id=comp.id %}">
+                {{ comp.comp_name }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

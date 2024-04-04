@@ -1,0 +1,64 @@
+{% extends "home_page.html" %}
+
+{% block content %}
+  <div class="scrollable-container"> <!-- New container for scrollable content -->
+    <div class="team-container">
+      <h5>Teams</h5>
+      <ul class="team-ul">
+        {% for team in teams %}
+          <li class="team-item">{{ team.team_name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <style>
+    /* CSS styles for the scrollable container */
+    .scrollable-container {
+      max-height: 90vh; /* Set a fixed maximum height for the container */
+      overflow-y: auto; /* Enable vertical scrolling when content overflows */
+    }
+
+    h5 {
+        color: #000; /* Set text color to black */
+        font-size: 36px;
+        padding: 25px; /* Remove padding */
+        margin: 0; /* Remove margin */
+    }
+
+    /* CSS styles for the team list */
+    .team-container {
+      width: 80%;
+      margin: 0 auto; /* Center the container */
+      text-align: center;
+    }
+
+    .team-heading {
+      font-size: 24px;
+      color: #000000;
+      margin-bottom: 20px;
+    }
+
+    .team-ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .team-item {
+      background-color: #ffffff;
+      border: 2px solid #3d3c3c;
+      border-radius: 5px;
+      padding: 10px 20px;
+      margin-bottom: 10px;
+      font-size: 18px;
+      transition: background-color 0.3s ease;
+      display: inline-block; /* Display items inline */
+      color: #1b1b1b; /* Dark text color */
+      font-weight: bold;
+    }
+
+    .team-item:hover {
+      background-color: #ffcf54;
+    }
+  </style>
+{% endblock %}

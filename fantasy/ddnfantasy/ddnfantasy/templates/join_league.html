@@ -1,0 +1,20 @@
+{% extends "home_page.html" %}
+{% block title %}Join League{% endblock %}
+
+{% block content %}
+  {% if messages %}
+    <div class="alert alert-danger" role="alert">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
+  
+  <!-- Join League Form -->
+  <form method="post">
+    {% csrf_token %}
+    <label for="league_id">League ID:</label>
+    <input type="text" id="league_id" name="league_id">
+    <input type="submit" value="Join" class="btn">
+  </form>
+{% endblock %}

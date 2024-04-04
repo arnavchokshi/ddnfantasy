@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DDN FANTASY{% endblock %}</title>
+    <style>
+        html {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent horizontal scroll due to moving shapes */
+            background: linear-gradient(to bottom right, #b76aff, #66b3ff); /* Initial gradient */
+            background-repeat: no-repeat; /* Ensure the gradient is applied only once */
+            animation: moveGradient 10s linear infinite; /* Apply animation to move the gradient */
+        }
+
+        /* Animation to move the gradient */
+        @keyframes moveGradient {
+            0% {
+                background-position: 0% 50%; /* Initial position */
+            }
+            100% {
+                background-position: 100% 50%; /* Final position */
+            }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrollbars due to moving shapes */
+            position: relative; /* Set position relative for absolute positioning of shapes */
+        }
+
+        .header {
+            background-color: #2b8a96; /* Bright teal */
+            padding: 20px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: wave 2s infinite alternate; /* Apply animation to the header */
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #d1e8e2; /* Soft mint green */
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px;
+            color: #333; /* Dark text color */
+        }
+
+        .logout-button {
+            background: none;
+            border: none;
+            padding: 0;
+            text-decoration: underline;
+            cursor: pointer;
+            color: #fff;
+            margin-left: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .logout-button:hover {
+            color: #d1e8e2; /* Soft mint green */
+        }
+
+        .card {
+            background-color: #f7f8f8; /* Light gray */
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .alert {
+            background-color: #ffffff; /* White */
+            color: #2b8a96; /* Bright teal */
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>DDN FANTASY</h1> <!-- Make the text clickable -->
+        <div class="nav-links">
+            <a href="/realPlacings">Real Placings</a>
+            <a href="/leagues">My Leagues</a>
+            <a href="/teams">Teams</a>
+            <a href="/comps">Predict Placings</a>
+            <a href="/polls">Voting</a>
+            {% if user.is_authenticated %}
+                <a href="/profile">Profile</a>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button class="logout-button" type="submit">Logout</button>
+                </form> 
+            {% else %}
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="content">
+        {%if messages %}
+            {% for message in messages %}
+                <div class="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% extends "home_page.html" %}
+
+{% block content %}
+    <h1>Team Poll Results</h1>
+    <h2>{{ team.team_name }}</h2>
+    <ul>
+        <li>Team: {{ team.team_name }} - Votes: {{ team.votes }}</li>
+    </ul>
+    <a href="{% url 'index' %}">Back to Polls</a>
+{% endblock %}

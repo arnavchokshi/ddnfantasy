@@ -1,0 +1,142 @@
+{% extends "home_page.html" %}
+
+{% block content %}
+    <style>
+        /* Add your CSS styles here */
+        body {
+            background: linear-gradient(to bottom right, #b76aff, #66b3ff); /* Gradient from purple to blue */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            min-height: 100vh;
+            font-family: Arial, sans-serif; /* Set default font family */
+        }
+
+        h5 {
+            color: #000; /* Set text color to black */
+            font-size: 36px;
+            padding: 25px; /* Remove padding */
+            margin: 0; /* Remove margin */
+        }
+        
+        .poll-list {
+            list-style-type: none; /* Remove bullet points from the list */
+            padding: 0;
+            margin: 0;
+            display: flex; /* Display the list items horizontally */
+            flex-wrap: wrap; /* Allow items to wrap to the next row */
+            justify-content: space-between; /* Add space between items */
+        }
+
+        .poll-item {
+            border: 2px solid #3d3c3c;
+            border-radius: 10px; /* Increase border radius for rounded corners */
+            padding: 20px;
+            margin-bottom: 20px;
+            width: calc(30% - 20px); /* Adjust width of poll items */
+            max-width: 400px; /* Set maximum width for responsiveness */
+            display: inline-block; /* Display items inline */
+            vertical-align: top; /* Align items to the top */
+            background-color: #f7f8f8; /* light blue background */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Add transition effects */
+        }
+
+        .poll-question {
+            margin-bottom: 10px;
+            color: #050505; /* Set text color */
+            padding-bottom: 0px; /* Add padding at the bottom of the question */
+        }
+
+        .choice-list {
+            list-style-type: none; /* Remove bullet points from the choices */
+            padding: 0;
+            margin: 0;
+            border-top: 0px solid #000000; /* Add top border to separate question and choices */
+            padding-top: 10px; /* Add padding at the top of choices */
+        }
+
+        .choice-item {
+            margin-bottom: 8px;
+            cursor: pointer; /* Add pointer cursor to indicate clickable */
+            color: #050505; /* Set text color */
+        }
+
+        .disabled {
+            pointer-events: none; /* Disable pointer events */
+            opacity: 0.5; /* Reduce opacity for disabled appearance */
+        }
+
+        .voted-text {
+            font-weight: bold;
+        }
+
+        .order-number {
+            margin-right: 10px;
+        }
+    </style>
+
+    <h5>Fan Placings</h5>
+
+    {% if latest_question_list %}
+        <ul class="poll-list">
+            {% for question in latest_question_list %}
+                <li class="poll-item">
+                    <div class="poll-question">
+                        <h2>{{ question.question_text }}</h2>
+                    </div>
+                    <hr class="divider">
+                    <form id="form-{{ question.id }}" action="{% url 'vote' question.id %}" method="post">
+                        {% csrf_token %}
+                        <ul class="choice-list" id="choice-list-{{ question.id }}">
+                            {% for choice in question.choices.all %}
+                                <li class="choice-item {% if user_has_voted %}disabled{% endif %}" {% if user_has_voted %}title="You have already voted"{% endif %} data-votes="{{ choice.votes }}">
+                                    <input type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" {% if user_has_voted %}disabled{% endif %}>
+                                    <label for="choice{{ choice.id }}">{{ choice.choice_text }}</label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        {% if not user_has_voted %}
+                            <button type="button" class="vote-button">Vote</button>
+                        {% endif %}
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery for AJAX -->
+    <script>
+        $(document).ready(function() {
+            $('.vote-button').click(function() {
+                var formId = $(this).closest('form').attr('id');
+                var choiceId = $('#' + formId + ' input[name="choice"]:checked').val();
+                $.ajax({
+                    type: 'POST',
+                    url: $('#' + formId).attr('action'),
+                    data: $('#' + formId).serialize(),
+                    success: function(data) {
+                        if (data.success) {
+                            // Replace the vote button with voted text after voting
+                            $('#' + formId + ' .vote-button').replaceWith('<span class="voted-text">Voted</span>');
+                            updateVoteCounts(data.vote_counts, formId); // Update vote counts for ordered display
+                        } else {
+                            // Display error message if vote fails
+                            alert(data.error);
+                        }
+                    }
+                });
+            });
+
+            function updateVoteCounts(voteCounts, formId) {
+                // Sort choices based on vote counts
+                var choices = $('#choice-list-' + formId.split('-')[1] + ' .choice-item').sort(function(a, b) {
+                    return $(b).data('votes') - $(a).data('votes'); // Sort in ascending order of votes
+                });
+                // Reorder choices in the DOM and add numbers
+                $('#choice-list-' + formId.split('-')[1]).html(choices);
+                $('#choice-list-' + formId.split('-')[1] + ' .choice-item').each(function(index) {
+                    $(this).prepend('<span class="order-number">' + (index + 1) + '</span>');
+                    $(this).find('input[type="radio"]').remove(); // Remove radio button
+                });
+            }
+        });
+    </script>
+{% endblock %}

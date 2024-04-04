@@ -1,0 +1,73 @@
+{% extends "home_page.html" %}
+
+{% block content %}
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #b76aff, #66b3ff); /* Gradient from purple to blue */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            min-height: 100vh;
+            font-family: Arial, sans-serif; /* Set default font family */
+        }
+
+        h2 {
+            color: #000; /* Set text color to black */
+            font-size: 36px;
+        }
+
+        h3 {
+            color: #000; /* Set text color to black */
+            font-size: 20px;
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid layout */
+            gap: 20px; /* Spacing between boxes */
+        }
+
+        .competition-box {
+            background-color: #f7f8f8; /* Background color for each competition box */
+            border: 2px solid #3d3c3c; /* Border color */
+            border-radius: 10px; /* Rounded corners */
+            padding: 20px; /* Padding inside the box */
+        }
+
+        .competition-box h3 {
+            margin-top: 0; /* Remove default margin for heading */
+        }
+
+        .divider {
+            border-top: 1px solid #ccc; /* Divider line between competition name and teams */
+            margin-top: 10px; /* Adjust spacing */
+            margin-bottom: 10px; /* Adjust spacing */
+        }
+
+        ul {
+            padding: 0; /* Remove default padding for list */
+            margin: 0; /* Remove default margin for list */
+        }
+
+        li {
+            list-style-type: none; /* Remove bullet points for list items */
+        }
+    </style>
+
+    <h2>Hi {{ user.username }}!</h2>
+    <h2>Current Elo: {{ user.userprofile.user_elo }} </h2>
+    <h3>Your top placing predictions are</h3>
+    <div class="profile-container">
+        {% for competition, teams in profile.top_teams.items %}
+            <div class="competition-box">
+                <h3>{{ competition }}</h3>
+                <hr class="divider">
+                <ul>
+                    {% for team in teams %}
+                        <li>{{ team }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+

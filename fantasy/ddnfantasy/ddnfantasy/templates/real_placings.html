@@ -1,0 +1,91 @@
+{% extends "home_page.html" %}
+{% block title %}Real Placings{% endblock %}
+{% block content %}
+<style>
+    /* Apply gradient background to body */
+    body {
+        background: linear-gradient(to bottom right, #b76aff, #66b3ff);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Container for the competition list */
+    .competition-container {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        max-height: 70vh; /* Set maximum height for vertical scrolling */
+        margin: 0 auto;
+        padding: 15px;
+        width: 35%; /* Set width of the container */
+    }
+
+    h5 {
+        color: #000; /* Set text color to black */
+        font-size: 36px;
+        padding: 25px; /* Remove padding */
+        margin: 0; /* Remove margin */
+    }
+
+    /* Style for each competition item */
+    .competition-item {
+        border: 2px solid #3d3c3c;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px; /* Add spacing between competition items */
+        text-align: center;
+        background-color: #f7f8f8;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    /* Style for competition links */
+    .competition-link {
+        text-decoration: none;
+        color: #050505;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    /* Style for placings */
+    .placing {
+        font-size: 24px;
+    }
+
+    /* Style for line between competition name and placings */
+    .line {
+        border-top: 2px solid #3d3c3c;
+        margin: 10px auto;
+        width: 80%;
+    }
+
+    /* Hover effect for competition items */
+    .competition-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Remove bullet points from the list */
+    .competition-list {
+        list-style: none;
+        padding: 0;
+    }
+</style>
+
+<h5 style="text-align: center;">Real Placings</h5>
+<div class="competition-container">
+    <ul class="competition-list">
+        {% for placing in real_placings %}
+            <li class="competition-item">
+                <a class="competition-link">{{ placing.comp_name }}</a>
+                <div class="line"></div> <!-- Line between competition name and placings -->
+                <p class="placing">1st Place: {{ placing.actual_first_place }}</p>
+                <p class="placing">2nd Place: {{ placing.actual_second_place }}</p>
+                <p class="placing">3rd Place: {{ placing.actual_third_place }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

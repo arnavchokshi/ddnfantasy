@@ -1,0 +1,104 @@
+{% extends "home_page.html" %}
+{% block title %}My Leagues{% endblock %}
+
+{% block content %}
+    <style>
+        /* Add your CSS styles here */
+        body {
+            background: linear-gradient(to bottom right, #b76aff, #66b3ff); /* Gradient from purple to blue */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            min-height: 100vh;
+            font-family: Arial, sans-serif; /* Set default font family */
+            color: #fff; /* Set text color to white */
+        }
+
+        .container {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header {
+            flex: 1 1 100%; /* Take full width */
+            text-align: left;
+        }
+
+        .leagues-section {
+            flex: 1 1 100%; /* Take full width */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            margin-top: 20px;
+        }
+
+        .league-container {
+            border: 2px solid #3d3c3c;
+            border-radius: 10px; /* Increase border radius for rounded corners */
+            padding: 20px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            width: calc(30% - 20px); /* Adjust width of league containers */
+            max-width: 400px; /* Set maximum width for responsiveness */
+            background-color: #f7f8f8; /* light blue background */
+            color: #000; /* Set text color to black */
+        }
+
+        .league-name {
+            font-size: 24px; /* Adjust font size */
+            margin: 0; /* Remove margin */
+        }
+
+        .separator {
+            border-top: 1px solid #3d3c3c; /* Dark border line */
+            margin: 10px 0; /* Add margin above and below the separator */
+        }
+
+        .member-list {
+            list-style-type: none; /* Remove bullet points */
+            padding: 0; /* Remove default padding */
+            margin: 0; /* Remove default margin */
+        }
+
+        .member-item {
+            margin-bottom: 5px; /* Add spacing between members */
+        }
+
+        .button-container {
+            flex: 1 1 10%; /* Take full width */
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn {
+            margin-left: 10px;
+        }
+    </style>
+
+    <div class="container">
+        <div class="header" style="font-family: Arial, sans-serif;">
+            <h1>My Leagues</h1>
+            <a href="{% url 'create_league' %}" class="btn" style="color: white; text-decoration: none; font-weight: bold;">Create League</a>
+            <a href="{% url 'join_league' %}" class="btn" style="color: white; text-decoration: none; font-weight: bold;">Join League</a>
+        </div>
+    </div>
+
+        <div class="leagues-section">
+            {% for league in user_leagues %}
+                <div class="league-container">
+                    <h2 class="league-name">{{ league.name }} - {{ league.league_id }}</h2>
+                    <div class="separator"></div>
+                    <ul class="member-list">
+                        {% for member in league.members.all %}
+                            <li class="member-item">{{ member.username }} - Elo: {{ member.userprofile.user_elo }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+{% endblock %}

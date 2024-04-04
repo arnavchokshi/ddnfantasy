@@ -1,0 +1,177 @@
+{% extends "home_page.html" %}
+{% block title %}Teams Attending {{ competition.comp_name }}{% endblock %}
+{% block content %}
+<style>
+    /* Center align content */
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        flex-direction: column; /* Align items in a column */
+    }
+
+    /* Style for the team list */
+    .team-list {
+        list-style-type: none; /* Remove bullet points */
+        padding: 0; /* Remove default padding */
+        text-align: center; /* Center align text */
+    }
+
+    /* Style for each team item */
+    .team-item {
+        margin-bottom: 20px; /* Add space between team items */
+        position: relative; /* Set position relative for numbering */
+        border: 2px solid #3d3c3c; /* Add border around team item */
+        border-radius: 8px; /* Add border radius for rounded corners */
+        padding: 10px; /* Add padding inside the box */
+        width: 200px; /* Set width for team item */
+        cursor: move; /* Add cursor style for draggable effect */
+        background-color: #f7f8f8; /* Light gray background color */
+        color: #1b1b1b; /* Dark text color */
+        font-weight: bold;
+    }
+
+    /* Style for team numbers */
+    .team-number {
+        position: absolute; /* Set position absolute */
+        top: -20px; /* Position team number above the team name */
+        left: 50%; /* Position team number at the center horizontally */
+        transform: translateX(-50%); /* Center align team number */
+        font-weight: bold; /* Make team number bold */
+        color: #0c0c0c; /* Neutral team number color */
+        background-color: #fff; /* White background for team number */
+        border: 2px solid #0f0f0f; /* Add border around team item */
+        border-radius: 8px; /* Add border radius for rounded corners */
+        padding: 5px; /* Add padding to team number */
+        border-radius: 50%; /* Make team number circular */
+        width: 20px; /* Set fixed width for team number */
+        height: 15px;
+        text-align: center; /* Center align text in team number */
+    }
+
+    /* Style for submit button */
+    #confirm-button {
+        margin-top: 20px; /* Add space above the button */
+        padding: 10px 20px; /* Add padding to the button */
+        border: none; /* Remove border */
+        border-radius: 5px; /* Add border radius */
+        background-color: #007bff; /* Blue button color */
+        color: #fff; /* White text color */
+        cursor: pointer; /* Add cursor style */
+        transition: background-color 0.3s; /* Add transition for hover effect */
+    }
+
+    #confirm-button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }
+</style>
+
+<div class="container">
+    <h1>Predicted Top 3 Placings For {{ competition.comp_name }}</h1>
+    <ul id="team-list" class="team-list">
+        {% for team in teams %}
+        <li id="team-{{ team.id }}" class="team-item">
+            {% if forloop.counter <= 3 %}
+            <span class="team-number">{{ forloop.counter }}</span> <!-- Display team number for top 3 teams -->
+            {% else %}
+            <span class="team-number">-</span> <!-- Display "-" for other teams -->
+            {% endif %}
+            {{ team.team_name }}
+        </li>
+        {% endfor %}
+    </ul>
+    <button id="confirm-button">Submit</button> <!-- Add submit button -->
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+<script>
+    $(function() {
+        // Enable sortable feature for team list
+        $("#team-list").sortable({
+            update: function(event, ui) {
+                updateTeamNumbers(); // Update team numbers after sorting
+            }
+        });
+
+        // Function to update team numbers
+        function updateTeamNumbers() {
+            $("#team-list .team-item").each(function(index) {
+                if (index < 3) {
+                    var teamNumber = index + 1; // Calculate the new team number for the top 3 teams
+                    $(this).find(".team-number").text(teamNumber); // Update the team number
+                } else {
+                    $(this).find(".team-number").text('-'); // Remove team numbers for teams beyond the top 3
+                }
+            });
+        }
+
+        // Function to get CSRF cookie value
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // Check if the cookie name matches the expected pattern
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Set CSRF token in AJAX requests
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                // Check if the request is cross-domain or safe
+                if (!this.crossDomain && !(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    // Set X-CSRFToken header with CSRF token value
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+            }
+        });
+
+        // Event handler for submit button click
+        $("#confirm-button").click(function() {
+            // Get the top team after sorting
+            var topTeamName = $("#team-list .team-item:first").text().trim().substring(11); // Remove the first 12 characters
+            var secondTopTeamName = $("#team-list .team-item:eq(1)").text().trim().substring(11); // Remove the first 12 characters
+            var thirdTopTeamName = $("#team-list .team-item:eq(2)").text().trim().substring(11); // Remove the first 12 characters
+
+            // Send AJAX POST request to update top team
+            $.ajax({
+                url: "/update_top_teams/",
+                method: "POST",
+                data: { 
+                    top_team_name: topTeamName,
+                    second_team_name: secondTopTeamName,
+                    third_team_name: thirdTopTeamName,
+                    competition_name: "{{ competition.comp_name }}" // Pass the competition name                    
+                },
+                success: function(response) {
+                    console.log("Response:", response); // Log the response from the server
+                    if (response.success) {
+                        alert("Top team updated successfully");
+                    } else {
+                        alert("Failed to update top team");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error updating top team:", error);
+                    alert("Failed to update top team");
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

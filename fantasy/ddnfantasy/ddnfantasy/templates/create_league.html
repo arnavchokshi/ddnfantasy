@@ -1,0 +1,22 @@
+{% extends "home_page.html" %}
+{% block title %}Create League{% endblock %}
+
+{% block content %}
+    <!-- Form for creating a league (initially hidden) -->
+    <form id="createLeagueForm" method="post" action="{% url 'create_league' %}">
+        {% csrf_token %}
+        <label for="name">League Name:</label>
+        <input type="text" id="name" name="name">
+        <label for="league_id">League ID:</label>
+        <input type="text" id="league_id" name="league_id">
+        <!-- Other fields can be added here -->
+        <input type="submit" value="Create">
+    </form>
+
+    <!-- Include JavaScript to show the form when the button is clicked -->
+    <script>
+        document.getElementById('showCreateLeagueForm').addEventListener('click', function() {
+            document.getElementById('createLeagueForm').style.display = 'block';
+        });
+    </script>
+{% endblock %}
