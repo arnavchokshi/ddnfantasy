@@ -1,2 +1,2 @@
 # ddnfantasy
-Website for ddn fantasy
+DDN fantasyn webpage built for dancers by dancers
